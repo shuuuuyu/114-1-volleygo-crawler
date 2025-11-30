@@ -1,33 +1,40 @@
-name: Daily Volleyball Schedule Scraper
+name: Daily Volleyball Scraper
 
 on:
   schedule:
-    - cron: '0 2 * * *'  # 每天台灣時間早上10點 (UTC+8)
-  workflow_dispatch:  # 允許手動觸發
+    - cron: '0 2 * * *'  # 每天 UTC 2:00 (台北時間 10:00)
+  workflow_dispatch:      # 手動觸發按鈕
 
 jobs:
   scrape:
     runs-on: ubuntu-latest
     
     steps:
-    - name: Checkout code
+    - name: Checkout repository
       uses: actions/checkout@v3
     
-    - name: Set up Python
+    - name: Setup Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.10'
     
     - name: Install dependencies
-      run: |
-        pip install -r requirements.txt
+      run: pip install -r requirements.txt
     
-    - name: Run scraper
+    - name: Run TVL scraper
       env:
         SUPABASE_HOST: ${{ secrets.SUPABASE_HOST }}
         SUPABASE_DATABASE: ${{ secrets.SUPABASE_DATABASE }}
         SUPABASE_USER: ${{ secrets.SUPABASE_USER }}
         SUPABASE_PASSWORD: ${{ secrets.SUPABASE_PASSWORD }}
         SUPABASE_PORT: ${{ secrets.SUPABASE_PORT }}
-      run: |
-        python your_scraper_script.py
+      run: python updateTVL.py
+    
+    - name: Run TPVL scraper
+      env:
+        SUPABASE_HOST: ${{ secrets.SUPABASE_HOST }}
+        SUPABASE_DATABASE: ${{ secrets.SUPABASE_DATABASE }}
+        SUPABASE_USER: ${{ secrets.SUPABASE_USER }}
+        SUPABASE_PASSWORD: ${{ secrets.SUPABASE_PASSWORD }}
+        SUPABASE_PORT: ${{ secrets.SUPABASE_PORT }}
+      run: python updateTVPL.py
